@@ -171,6 +171,7 @@ body {
 }
 .right .half {
   flex: 1;
+  padding-top: 20px;
 }
 .right .stock {
   position: relative;

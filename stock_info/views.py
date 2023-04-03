@@ -8,5 +8,4 @@ def stock_view(request):
     query_dict = request.GET
     query = query_dict.get('q')
     
-
     return render(request, 'stock_info/stock_info.html', context=context)

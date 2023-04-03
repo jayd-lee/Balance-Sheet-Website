@@ -16,6 +16,7 @@
 <body>
     <div class="center">
         <div class="left">
+            
           <div class="logo">
             <svg viewBox="0 0 200 400" width="100" height="100">
               <path d=" M 174.627 77.683 C 173.776 78.815 142.411 133.739 129.968 166.414 C 129.34 168.064 128.78 169.45 128.204 171.119 C 127.727 172.503 127.488 173.714 126.933 175.086 C 126.212 176.871 126.006 177.829 125.667 179.358 C 125.301 181.008 124.477 184.693 124.121 187.63 C 123.856 189.808 123.741 191.662 123.663 193.853 C 123.462 199.472 123.876 204.233 124.636 209.8 C 127.42 230.202 135.691 246.266 147.665 262.895 C 148.73 264.375 149.618 265.639 150.777 267.047 C 152.739 269.432 154.445 271.444 156.857 273.381 C 159.729 275.688 162.496 277.205 165.903 278.596 C 168.996 279.859 171.753 280.586 175.056 281.078 C 178.597 281.605 181.659 281.725 185.216 281.306 C 188.955 280.865 192.024 279.892 195.522 278.517 C 197.728 277.65 199.557 276.802 201.61 275.62 C 204.662 273.863 225.417 262.219 236.258 252.224 C 239.451 249.28 244.212 243.928 244.962 243.452 C 245.712 242.977 264.83 213.834 259.473 198.687 Q 256.513 190.317 211.583 109.026 Q 196.037 82.262 193.522 78.637 C 191.452 75.653 188.937 70.289 183.683 70.278 C 178.429 70.267 175.231 76.89 175.106 76.877 M 236.638 249.594" fill-rule="evenodd" fill="rgb(219,223,255)"></path>
@@ -28,8 +29,8 @@
             </svg>
           </div>
           <div class="company">
-            <div class="company-name">TradeNinja</div>
-            <div class="company-description">Stock trading app for everyone</div>
+            <div class="company-name">Balance Sheet</div>
+            <div class="company-description"></div>
           </div>
           <div class="navigation">
             <ul>
@@ -47,7 +48,13 @@
         <div class="right">
           <div class="title">Balance Sheet</div>
           <div class="description">Find the balance sheet of your favorite companies</div>
+            
 
+          <form action='/stock/'>
+            <input type='text' id='searchbar' name='q'>
+            <input type='submit' id='submit'>
+          </form>
+          
             {% block content %}
 
             {% endblock content %}

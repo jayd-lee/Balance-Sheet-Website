@@ -32,4 +32,4 @@ bs('Assets')
 bs('Liabilities')
 bs('StockholdersEquity')
 
-plt.show()
+#plt.show()

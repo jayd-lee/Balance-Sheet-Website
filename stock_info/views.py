@@ -52,7 +52,7 @@ def stock_view(request):
     try:
         assets = bs('Assets')
     except:
-        assets = bs('AssetsCurrent')
+        assets = pd.DataFrame(np.nan, index=['2020-12-31'], columns=['assets'])
 
     try:
         liabilities = bs('Liabilities')

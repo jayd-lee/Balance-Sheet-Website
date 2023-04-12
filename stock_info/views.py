@@ -63,7 +63,11 @@ def stock_view(request):
     try:
         stock_holder_equity = bs('StockholdersEquity')
     except:
-        stock_holder_equity = bs('StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest')
+        try:
+            stock_holder_equity = bs('StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest')
+        except:
+            stock_holder_equity = pd.DataFrame(np.nan, index=['2020-12-31'], columns=['stockholdersequity'])
+    
 
 
 

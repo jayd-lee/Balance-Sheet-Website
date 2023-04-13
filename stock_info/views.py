@@ -5,6 +5,8 @@ import numpy as np
 
 from django.shortcuts import render
 
+
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -23,15 +25,18 @@ def stock_view(request):
     
     query_dict = request.GET
     query = query_dict.get('q')
-
     # API calls
-
     symbol = query.upper()
+
+    cik = ""
+
     for info in T_list:
         if symbol == info['ticker']:
             new = info['cik_str'] #if there is a match assign to a new variable
             cik = f'{new:010d}' #format the new variable with leading zeros
+    
 
+    
     companyConcept = requests.get(
         (f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json'), headers=header)
 
@@ -58,7 +63,6 @@ def stock_view(request):
         liabilities = bs('Liabilities')
     except:
         liabilities = pd.DataFrame(np.nan, index=['2020-12-31'], columns=['liabilites'])
-
         
     try:
         stock_holder_equity = bs('StockholdersEquity')

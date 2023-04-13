@@ -17,9 +17,15 @@ from django.contrib import admin
 from django.urls import path
 from stock_info.views import stock_view
 from .views import home_view
+from accounts.views import (
+    login_view,
+    logout_view
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', home_view),
-    path('stock/', stock_view)
+    path('stock/', stock_view),
+    path('login/', login_view),
+    path('logout/', logout_view)
 ]

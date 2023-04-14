@@ -1,0 +1,73 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import requests
+import numpy as np
+header = {'User-Agent': "mr.muffin235@gmail.com"}
+companyTickers = requests.get("https://www.sec.gov/files/company_tickers.json", headers=header)
+T_list = companyTickers.json().values()
+
+symbol = 'INTC'
+for info in T_list:
+    if symbol == info['ticker']:
+        new = info['cik_str'] #if there is a match assign to a new variable
+        cik = f'{new:010d}' #format the new variable with leading zeros
+
+companyConcept = requests.get(f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json', headers=header)
+
+#print(companyConcept.json()['facts']['us-gaap'].keys())
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+pd.set_option('display.max_rows', 500)
+
+
+
+def show(account):
+    df = pd.DataFrame(companyConcept.json()['facts']['us-gaap'][account]['units']['USD'])
+    df = df[(df['fp'] == 'FY') & (df['form'] == '10-K')]
+    #df['end'] = df['end'].str[:4]
+    df = df.drop_duplicates('val')  # drops duplicate 'val'
+    df = df.drop_duplicates('end')  # drops duplicate 'end'
+    df = df.drop_duplicates('fy')  # drops duplicate 'fy'
+    df = df.rename(columns={'val': account})
+    df.drop(columns=['end', 'accn', 'fp', 'form', 'filed', 'frame'], inplace=True)
+    df = df[df['fy'] > 2015]
+    df.set_index('fy', inplace=True)
+    return df
+    #print(df)
+    #df.plot.bar()
+
+try:
+    assets = show('Assets')
+except:
+    assets = pd.DataFrame(np.nan, index=['fy'], columns=['assets'])
+
+try:
+    stock_holder_equity = show('StockholdersEquity')
+except:
+    try:
+        stock_holder_equity = show('StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest')
+        stock_holder_equity = stock_holder_equity.rename(columns={'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest': 'Equity2'})
+    except:
+        stock_holder_equity = pd.DataFrame(np.nan, index=['fy'], columns=['stockholdersequity'])
+
+result = pd.merge(assets, stock_holder_equity, left_index=True, right_index=True, how='outer')
+
+try:
+    liabilities = show('Liabilities')
+    result = pd.merge(result, liabilities, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False).T
+except:
+    result.insert(1, 'Liabilities', result.iloc[:, 0] + result.iloc[:, 1])
+    result = result.sort_index(ascending=False).T
+
+print(symbol)
+print(result)
+
+if result.isna().all().all():
+    print('Sorry, not an american company :(')
+
+
+plt.show()
+
+
+

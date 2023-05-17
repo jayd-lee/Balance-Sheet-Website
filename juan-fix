@@ -2,11 +2,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 import numpy as np
+import time
+start = time.perf_counter()
 header = {'User-Agent': "mr.muffin235@gmail.com"}
 companyTickers = requests.get("https://www.sec.gov/files/company_tickers.json", headers=header)
 T_list = companyTickers.json().values()
 
-symbol = 'INTC'
+symbol = 'BKE'
 for info in T_list:
     if symbol == info['ticker']:
         new = info['cik_str'] #if there is a match assign to a new variable
@@ -30,7 +32,7 @@ def show(account):
     df = df.drop_duplicates('fy')  # drops duplicate 'fy'
     df = df.rename(columns={'val': account})
     df.drop(columns=['end', 'accn', 'fp', 'form', 'filed', 'frame'], inplace=True)
-    df = df[df['fy'] > 2015]
+    df = df[df['fy'] > 2016]
     df.set_index('fy', inplace=True)
     return df
     #print(df)
@@ -55,10 +57,227 @@ result = pd.merge(assets, stock_holder_equity, left_index=True, right_index=True
 try:
     liabilities = show('Liabilities')
     result = pd.merge(result, liabilities, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    result.insert(1, 'Liabilities', result.iloc[:, 0] - result.iloc[:, 1])
+    result = result.sort_index(ascending=False)
+
+try:
+    assets_current = show('AssetsCurrent')
+    result = pd.merge(result, assets_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    assets_current = pd.DataFrame(np.nan, index=['fy'], columns=['AssetsCurrent'])
+
+try:
+    liabilities_current = show('LiabilitiesCurrent')
+    result = pd.merge(result, liabilities_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    liabilities_current = pd.DataFrame(np.nan, index=['fy'], columns=['LiabilitiesCurrent'])
+
+try:
+    cash = show('CashAndCashEquivalentsAtCarryingValue')
+    result = pd.merge(result, cash, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    pd.DataFrame(np.nan, index=['fy'], columns=['CashAndCashEquivalentsAtCarryingValue'])
+
+try:
+    stock_value = show('CommonStockValue')
+    result = pd.merge(result, stock_value, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    stock_value = pd.DataFrame(np.nan, index=['fy'], columns=['CommonStockValue'])
+
+try:
+    com_stock_par = show('CommonStockParOrStatedValuePerShare')
+    result = pd.merge(result, com_stock_par, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    com_stock_par = pd.DataFrame(np.nan, index=['fy'], columns=['CommonStockParOrStatedValuePerShare'])
+
+try:
+    ppe = show('PropertyPlantAndEquipmentNet')
+    result = pd.merge(result, ppe, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    ppe = pd.DataFrame(np.nan, index=['fy'], columns=['PropertyPlantAndEquipmentNet'])
+
+try:
+    ppe_depr = show('AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment')
+    result = pd.merge(result, ppe_depr, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    ppe_depr = pd.DataFrame(np.nan, index=['fy'], columns=['AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment'])
+
+try:
+    assets_leases = show('OperatingLeaseRightOfUseAsset')
+    result = pd.merge(result, assets_leases, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    assets_leases = pd.DataFrame(np.nan, index=['fy'], columns=['OperatingLeaseRightOfUseAsset'])
+
+try:
+    assets_current = show('DeferredTaxAssetsGross')
+    result = pd.merge(result, assets_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    assets_current = pd.DataFrame(np.nan, index=['fy'], columns=['DeferredTaxAssetsGross'])
+
+try:
+    apic = show('AdditionalPaidInCapital')
+    result = pd.merge(result, apic, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    apic = pd.DataFrame(np.nan, index=['fy'], columns=['AdditionalPaidInCapital'])
+
+try:
+    liabilities_leases = show('OperatingLeaseLiability')
+    result = pd.merge(result, liabilities_leases, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    liabilities_leases = pd.DataFrame(np.nan, index=['fy'], columns=['OperatingLeaseLiability'])
+
+try:
+    proceeds = show('ProceedsFromIssuanceOfCommonStock')
+    result = pd.merge(result, proceeds, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    proceeds = pd.DataFrame(np.nan, index=['fy'], columns=['ProceedsFromIssuanceOfCommonStock'])
+
+try:
+    prf_stock_par = show('PreferredStockParOrStatedValuePerShare')
+    result = pd.merge(result, prf_stock_par, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    prf_stock_par = pd.DataFrame(np.nan, index=['fy'], columns=['PreferredStockParOrStatedValuePerShare'])
+
+try:
+    ppe_gross = show('PropertyPlantAndEquipmentGross')
+    result = pd.merge(result, ppe_gross, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    ppe_gross = pd.DataFrame(np.nan, index=['fy'], columns=['PropertyPlantAndEquipmentGross'])
+
+try:
+    assets_tax = show('DeferredTaxAssetsNet')
+    result = pd.merge(result, assets_tax, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    assets_tax = pd.DataFrame(np.nan, index=['fy'], columns=['DeferredTaxAssetsNet'])
+
+try:
+    ap_current = show('AccountsPayableCurrent')
+    result = pd.merge(result, ap_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    ap_current = pd.DataFrame(np.nan, index=['fy'], columns=['AccountsPayableCurrent'])
+
+try:
+    liabilities_leases_current = show('OperatingLeaseLiabilityCurrent')
+    result = pd.merge(result, liabilities_leases_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    liabilities_leases_current = pd.DataFrame(np.nan, index=['fy'], columns=['OperatingLeaseLiabilityCurrent'])
+
+try:
+    liabilities_leases_noncurrent = show('OperatingLeaseLiabilityNoncurrent')
+    result = pd.merge(result, liabilities_leases_noncurrent, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    liabilities_leases_noncurrent = pd.DataFrame(np.nan, index=['fy'], columns=['OperatingLeaseLiabilityNoncurrent'])
+
+try:
+    liabilities_tax = show('DeferredTaxAssetsLiabilitiesNet')
+    result = pd.merge(result, liabilities_tax, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    liabilities_tax = pd.DataFrame(np.nan, index=['fy'], columns=['DeferredTaxAssetsLiabilitiesNet'])
+
+try:
+    ar_current = show('AccountsReceivableNetCurrent')
+    result = pd.merge(result, ar_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    ar_current = pd.DataFrame(np.nan, index=['fy'], columns=['AccountsReceivableNetCurrent'])
+
+try:
+    assets_other = show('OtherAssetsNoncurrent')
+    result = pd.merge(result, assets_other, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    assets_other = pd.DataFrame(np.nan, index=['fy'], columns=['OtherAssetsNoncurrent'])
+
+try:
+    deferred = show('DeferredTaxAssetsOther')
+    result = pd.merge(result, deferred, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    deferred = pd.DataFrame(np.nan, index=['fy'], columns=['DeferredTaxAssetsOther'])
+
+try:
+    accrued_liabilities_current = show('AccruedLiabilitiesCurrent')
+    result = pd.merge(result, accrued_liabilities_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    accrued_liabilities_current = pd.DataFrame(np.nan, index=['fy'], columns=['AccruedLiabilitiesCurrent'])
+
+try:
+    goodwill = show('Goodwill')
+    result = pd.merge(result, goodwill, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    goodwill = pd.DataFrame(np.nan, index=['fy'], columns=['Goodwill'])
+
+try:
+    deferred_tax = show('DeferredIncomeTaxLiabilities')
+    result = pd.merge(result, deferred_tax, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    deferred_tax = pd.DataFrame(np.nan, index=['fy'], columns=['DeferredIncomeTaxLiabilities'])
+
+try:
+    debt = show('LongTermDebt')
+    result = pd.merge(result, debt, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    debt = pd.DataFrame(np.nan, index=['fy'], columns=['LongTermDebt'])
+
+try:
+    intangible = show('FiniteLivedIntangibleAssetsNet')
+    result = pd.merge(result, intangible, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    intangible = pd.DataFrame(np.nan, index=['fy'], columns=['FiniteLivedIntangibleAssetsNet'])
+
+try:
+    intangible_depr = show('FiniteLivedIntangibleAssetsAccumulatedAmortization')
+    result = pd.merge(result, intangible_depr, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    intangible_depr = pd.DataFrame(np.nan, index=['fy'], columns=['FiniteLivedIntangibleAssetsAccumulatedAmortization'])
+
+try:
+    debt_current = show('LongTermDebtCurrent')
+    result = pd.merge(result, debt_current, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    debt_current = pd.DataFrame(np.nan, index=['fy'], columns=['LongTermDebtCurrent'])
+
+try:
+    retained_earnings = show('RetainedEarningsAccumulatedDeficit')
+    result = pd.merge(result, retained_earnings, left_index=True, right_index=True, how='outer')
+    result = result.sort_index(ascending=False)
+except:
+    retained_earnings = pd.DataFrame(np.nan, index=['fy'], columns=['RetainedEarningsAccumulatedDeficit'])
+
+try:
+    liabilities_equity = show('LiabilitiesAndStockholdersEquity')
+    result = pd.merge(result, liabilities_equity, left_index=True, right_index=True, how='outer')
     result = result.sort_index(ascending=False).T
 except:
-    result.insert(1, 'Liabilities', result.iloc[:, 0] + result.iloc[:, 1])
-    result = result.sort_index(ascending=False).T
+    liabilities_equity = pd.DataFrame(np.nan, index=['fy'], columns=['LiabilitiesAndStockholdersEquity'])
 
 print(symbol)
 print(result)
@@ -66,8 +285,10 @@ print(result)
 if result.isna().all().all():
     print('Sorry, not an american company :(')
 
-
+end = time.perf_counter()
+#print(end - start)
 plt.show()
+
 
 
 
